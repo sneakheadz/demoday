@@ -1,0 +1,79 @@
+apiVersion: soperator.nebula-cloud.io/v1alpha1 # CHECK YOUR SOPERATOR VERSION/DOCS
+kind: SoperatorJob                     # CHECK YOUR SOPERATOR VERSION/DOCS
+metadata:
+  name: nemotron-codealpaca-finetune-job
+  namespace: ml-jobs # Or your preferred namespace
+spec:
+  worker: # Define the training pod(s)
+    replicas: 1 # Start with 1, increase for distributed training (requires script changes)
+    template:
+      spec:
+        containers:
+          - name: trainer # Container name
+            image: your-registry-url/nemotron-codealpaca-finetune:v1 # IMAGE_URI from Step 3
+            command: ["python", "/app/train.py"] # Command to execute
+            env: # Pass configuration as environment variables
+              - name: MODEL_ID
+                value: "nvidia/nemotron-..." # The specific Nemotron model ID
+              - name: OUTPUT_DIR
+                value: "/results"
+              - name: CACHE_DIR
+                value: "/cache"
+              - name: NUM_TRAIN_EPOCHS
+                value: "1"
+              - name: BATCH_SIZE # Per-device batch size (adjust based on GPU memory)
+                value: "1"
+              - name: GRAD_ACCUMULATION_STEPS # Accumulate gradients (adjust based on memory)
+                value: "32"
+              - name: LEARNING_RATE
+                value: "1e-5"
+              # Pass Hugging Face Token securely if needed
+              - name: HF_TOKEN
+                valueFrom:
+                  secretKeyRef:
+                    name: huggingface-secret # Name of your K8s secret
+                    key: token           # Key within the secret containing the token
+            resources: # Request resources, ESPECIALLY GPUs
+              limits:
+                # MUST match GPU types available in Nebius & Soperator config
+                nvidia.com/gpu: 1 # Request 1 GPU
+                # Example specific type: nvidia.com/gpu.product=NVIDIA-H100-PCIe: 1
+                memory: "256Gi" # Request significant host memory
+                cpu: "32"       # Request CPUs
+              requests: # Requests often match limits for guaranteed resources
+                nvidia.com/gpu: 1
+                memory: "256Gi"
+                cpu: "32"
+            volumeMounts: # Mount persistent storage
+              - name: model-output # Where to save the final model
+                mountPath: /results
+              - name: huggingface-cache # Persistent cache for datasets/models
+                mountPath: /cache
+              # Mount secrets if needed (e.g., for NGC API key)
+              # - name: ngc-secret-vol
+              #   mountPath: /etc/ngc # Example path
+              #   readOnly: true
+        volumes: # Define the volumes linked to PersistentVolumeClaims
+          - name: model-output
+            persistentVolumeClaim:
+              claimName: nemotron-output-pvc # You MUST create this PVC beforehand
+          - name: huggingface-cache
+            persistentVolumeClaim:
+              claimName: hf-cache-pvc # You MUST create this PVC beforehand
+          # Define secret volume if mounting secrets
+          # - name: ngc-secret-vol
+          #   secret:
+          #     secretName: ngc-api-key-secret # Name of your K8s secret for NGC key
+
+        # Optional: Specify node selectors for GPU nodes, tolerations etc.
+        # nodeSelector:
+        #   cloud.nebula.io/gpu-type: nvidia-h100 # Example label - check Nebius docs
+        # tolerations:
+        # - key: "nvidia.com/gpu"
+        #   operator: "Exists"
+        #   effect: "NoSchedule"
+
+  # --- Define Restart Policy ---
+  restartPolicy: Never # Typical for batch jobs
+
+  # --- Potentially other Soperator settings for scheduling, priorities, etc. ---
