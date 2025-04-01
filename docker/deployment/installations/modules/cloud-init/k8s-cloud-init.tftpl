@@ -1,0 +1,25 @@
+%{ if enable_filestore != "false" || enable_glusterfs != "false" }
+mounts:
+%{ endif }
+%{ if enable_filestore != "false" }
+- [ data, /mnt/data, virtiofs, "defaults", 0, 2 ]
+%{ endif }
+%{ if enable_glusterfs != "false" }
+- [ '${glusterfs_host}:${glusterfs_volume}', /mnt/glusterfs, glusterfs, "defaults,nofail", 0, 2 ]
+
+packages:
+  - glusterfs-client
+
+runcmd:
+ - [ modprobe, fuse ]
+ - [ mkdir, '-p', /mnt/data ]
+ - [ mount, '-a' ]
+ 
+%{ endif }
+
+users:
+ - name: ${ssh_user_name}
+   sudo: ALL=(ALL) NOPASSWD:ALL
+   shell: /bin/bash
+   ssh_authorized_keys:
+    - ${ssh_public_key}

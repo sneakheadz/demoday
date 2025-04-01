@@ -1,6 +1,0 @@
-*
-!.gitignore
-!example
-
-./**/terraform_backend_override.tf
-./**/login*.sh

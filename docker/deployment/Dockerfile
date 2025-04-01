@@ -7,6 +7,7 @@ RUN apt-get update && apt-get install -y \
     unzip \
     curl \
     jq \
+    nano\
     coreutils \
     && rm -rf /var/lib/apt/lists/*
 
@@ -24,6 +25,12 @@ RUN curl -LO "https://storage.googleapis.com/kubernetes-release/release/$(curl -
     && chmod +x kubectl \
     && mv kubectl /usr/local/bin/
 
+# Create insallation folder
+RUN mkdir -p /installations
+
+# Copy installation file into the container
+COPY installations/ /installations
+
 # Verify installations (optional)
 RUN terraform --version \
    # && nebius version \
@@ -35,7 +42,7 @@ RUN terraform --version \
    # && which nebius
 
 # Set the working directory (optional)
-WORKDIR /app
+WORKDIR /installations/demodayhc
 
 # Define the entry point (optional)
-# ENTRYPOINT ["/bin/bash"]
+ENTRYPOINT ["/bin/bash"]
