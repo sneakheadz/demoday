@@ -1,0 +1,29 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: hf-cache-pvc
+  namespace: ml-training
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 100Gi
+  # Set the StorageClass based on your cluster's available classes
+  storageClassName: compute-csi-default-sc
+
+--- # Separator for the next resource in the same file
+
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: training-results-pvc
+  namespace: ml-training
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 100Gi
+  # Set the StorageClass based on your cluster's available classes
+  storageClassName: compute-csi-default-sc
