@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: hf-secret
+  # namespace: default  # You can uncomment and set a specific namespace if needed
+type: Opaque            # 'generic' secrets are of type Opaque
+stringData:
+  HF_TOKEN: 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

@@ -22,7 +22,6 @@ Before starting, ensure you have these tools installed:
 - [Nebius CLI ](https://nebius.com/docs/cli/quickstart)
 - [kubectl](https://kubernetes.io/docs/tasks/tools/)
 - [jq](https://jqlang.github.io/jq/download/)
-- [aws CLI ](https://awscli.amazonaws.com/)
 - coreutils: 
   - macOS: `brew install coreutils`
   - Ubuntu: `sudo apt-get install coreutils`
@@ -108,12 +107,6 @@ You probably don't need this unless you want to manage the K8S cluster manually.
 > - Ensure SSH keys are added to the correct location
 
 5. **Deploy Your Cluster**
-
-```bash
-export TF_LOG="DEBUG"
-export TF_LOG_PATH="terraform-apply.log" #export the logs to review errors
-```
-
 ```bash
 terraform init
 terraform plan # check for errors ahead of time. 
