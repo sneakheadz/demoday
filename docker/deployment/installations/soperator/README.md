@@ -91,6 +91,10 @@ k8s_cluster_node_group_gpu = {
 }
 
 # Add your SSH public key here to connect to the Slurm cluster in based64 format 
+important to generate key with rsa cryto libaray 
+example 
+ssh-keygen -t rsa -b 4096 -f id_rsa_key
+and set priviate key to 600 ( chmod 600 <priviate key>)
 slurm_login_ssh_root_public_keys = [
   "ssh-rsa AAAAB3N... your-key"
 ]
@@ -136,6 +140,9 @@ kubectl get pods --all-namespaces
 Get the Slurm cluster IP address
 ```bash
 export SLURM_IP=$(terraform state show module.login_script.terraform_data.lb_service_ip | grep 'input' | grep -oE '[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+' | head -n 1)
+
+
+
 ssh root@$SLURM_IP -i ~/.ssh/<private_id_rsa_key>
 ```
 
@@ -149,11 +156,12 @@ or connect using the login script:
 ## (Optional) Test Your Installation
 
 Copy the test files to the Slurm cluster:
-```bash
-cd soperator/test
-./prepare_for_quickcheck.sh -u root -k ~/.ssh/<private_id_rsa_key> -a $SLURM_IP
-```
 
+```bash
+
+scp -r -i /path/to/your/private_key /path/to/local_folder user@remote_host:/path/to/remote_parent_directory/
+
+```
 Connect to the Slurm cluster and run the tests:
 
 ```bash

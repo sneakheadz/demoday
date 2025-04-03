@@ -1,27 +1,47 @@
-# Use a base image with CUDA and PyTorch matching your needs
-FROM pytorch/pytorch:2.1.0-cuda11.8-cudnn8-runtime
+# Use a base image with PyTorch, CUDA, and CUDNN matching requirements
+FROM pytorch/pytorch:2.1.0-cuda12.1-cudnn8-devel
 
-WORKDIR /app
+# Set environment variables to prevent interactive prompts during build
+ENV DEBIAN_FRONTEND=noninteractive
+ENV PYTHONUNBUFFERED=1
 
-# Install Python dependencies
-# Use recent versions of transformers/datasets/accelerate
+# Install system dependencies needed for git and potentially some pip installs
+# Combine steps to reduce layers and clean up in the same layer
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    git \
+    wget \
+    build-essential \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install Python packages using pip
+# Pin versions for reproducibility
+# Use --no-cache-dir to reduce image size
 RUN pip install --no-cache-dir \
-    transformers[torch]>=4.35.0 \
-    datasets>=2.15.0 \
-    accelerate>=0.25.0 \
-    tensorboard
-    # Add other needed libs below here if necessary, ensuring the last one
-    # does NOT end with a backslash (\) unless followed by more packages.
-    # ---
-    # Example for potentially installing NVIDIA Apex (ensure source is present):
-    # pip install -v --disable-pip-version-check --no-cache-dir --global-option="--cpp_ext" --global-option="--cuda_ext" ./apex
+    transformers==4.39.3 \
+    datasets==2.18.0 \
+    accelerate==0.29.3 \
+    peft==0.10.0 \
+    bitsandbytes==0.43.1 \
+    torch==2.1.0 \
+    wandb==0.16.6 \
+    scipy
 
-# Copy the training script into the image
-# Ensure train.py is in the same directory as the Dockerfile during build
-COPY training.py .
+# Create directories for caching (optional, but good if mounting volumes later)
+# Grant permissions widely, assuming non-root user might run container or mount volumes
+RUN mkdir -p /opt/hf_cache /opt/wandb_cache && \
+    chmod -R 777 /opt/hf_cache /opt/wandb_cache
 
-# Make port 8080 available for readiness probe if needed by Soperator
-# EXPOSE 8080
+# Set default environment variables for Hugging Face and WandB caches
+# These can be overridden at runtime (e.g., in the Slurm script via Apptainer/Singularity env vars or Docker's -e flag)
+ENV TRANSFORMERS_CACHE=/opt/hf_cache
+ENV HF_HOME=/opt/hf_cache
+ENV WANDB_CACHE_DIR=/opt/wandb_cache
+ENV WANDB_DISABLED=true 
 
-# Entrypoint can be overridden in Soperator manifest
-# ENTRYPOINT ["python", "train.py"]
+# Set a working directory for the container
+WORKDIR /workspace
+
+# Default command (can be easily overridden when running the container)
+# Useful for basic checks or if the user always runs python scripts
+CMD ["python"]
