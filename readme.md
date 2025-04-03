@@ -1,4 +1,4 @@
-# SneakHeadz Demo Day Repository
+# Demo Day Repository
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE) ## Welcome! 👋
 
@@ -6,7 +6,7 @@ This repository contains the projects, presentations, code samples, and other ma
 
 ## About the Demo Day
 
-The SneakHeadz Demo Day was an event focused on **[Briefly describe the purpose or theme of the Demo Day - e.g., showcasing internal projects, presenting new community features, demonstrating innovative sneaker tech concepts, etc.]**. This repository serves as an archive and resource hub for everything presented.
+
 
 ## Contents
 
