@@ -45,11 +45,10 @@ RUN curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2
 RUN mkdir -p /installations
 
 # Copy installation file into the container
-# Ensure an 'installations' directory exists in your build context (next to the Dockerfile)
+
 COPY installations/ /installations/
 
-# Verify installations (optional but recommended)
-# Chain commands with && so the build fails if any verification fails
+#verify installations
 RUN terraform --version \
     && kubectl version --client \
     && aws --version \
@@ -64,13 +63,9 @@ RUN terraform --version \
     # Uncomment the line below if you want the build to fail if nebius isn't found/working
     # && nebius version
 
-# Set the working directory (optional)
+
 WORKDIR /installations/
 
-# Define the entry point (optional)
-# This makes the container run bash interactively when started without a command
+
 ENTRYPOINT ["/bin/bash"]
 
-# Note: This Dockerfile includes the SSH *client* (openssh-client).
-# If you need an SSH *server* inside the container (to SSH *into* it),
-# you would need to install 'openssh-
