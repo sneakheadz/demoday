@@ -25,7 +25,7 @@ The repository is organized as follows:
 * `/k8s/`: Contains all materials related to k8s configus some of which are not deployed.
 * `/training/`:  all training related scripts py and slurm batch. 
 * `/presentation/`:  final documentation will be on demo day. .
-* **[Adjust this list based on the actual folder structure in the repository]**
+
 
 Each project or presentation directory may contain its own `README.md` with more specific instructions and details.
 
