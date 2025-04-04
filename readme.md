@@ -2,7 +2,7 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE) ## Welcome! 👋
 
-This repository contains the projects, presentations, code samples, and other materials showcased during the **SneakHeadz Demo Day** event held on **[Date of the Demo Day - e.g., March 15, 2025]**.
+This repository contains the projects, presentations, code samples, and other materials showcased during the **HC Demo Day** event held on **[Date of the Demo Day - e.g., April 7 2025]**.
 
 ## About the Demo Day
 
@@ -21,11 +21,11 @@ This repository includes:
 
 The repository is organized as follows:
 
-* `/project-name-1/`: Contains all materials related to the first project/demo.
-* `/project-name-2/`: Contains all materials related to the second project/demo.
-* `/presentations/`: (Optional) A central place for all slide decks.
-* `/shared-resources/`: (Optional) Any shared libraries, assets, or documentation.
-* **[Adjust this list based on the actual folder structure in the repository]**
+* `/docker/`: Contains all materials related to the docker build
+* `/k8s/`: Contains all materials related to k8s configus some of which are not deployed.
+* `/training/`:  all training related scripts py and slurm batch. 
+* `/presentation/`:  final documentation will be on demo day. .
+
 
 Each project or presentation directory may contain its own `README.md` with more specific instructions and details.
 
@@ -44,24 +44,12 @@ To explore or run the demos:
     ```
 3.  **Follow the instructions:** Look for a `README.md` file within that directory for specific prerequisites (e.g., Node.js version, Python environment, Docker, API keys) and setup/run commands.
 
-**Common Prerequisites might include:**
-* **[e.g., Node.js v18+]**
-* **[e.g., Python 3.10+]**
-* **[e.g., Docker and Docker Compose]**
-* **[e.g., Specific API Keys or credentials stored in environment variables]**
 
-## Contributors / Presenters
+## Thank you! 
 
-A big thank you to everyone who presented and contributed to the Demo Day!
+A big thank you to everyone who attends the to the Demo Day!
 
-* **[Presenter/Team Name 1]** - **[Project/Topic Name 1]**
-* **[Presenter/Team Name 2]** - **[Project/Topic Name 2]**
-* **[Add more as needed]**
 
-## Related Links
-
-* **[Link to SneakHeadz Website/Community Page (if applicable)]**
-* **[Link to Event Recording (if available)]**
 * **[Link to Blog Post Recap (if available)]**
 
 ## Questions?
