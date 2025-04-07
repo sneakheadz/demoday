@@ -7,6 +7,7 @@ ENV PYTHONUNBUFFERED=1
 
 # Install system dependencies needed for git and potentially some pip installs
 # Combine steps to reduce layers and clean up in the same layer
+# REMOVED slurm-client
 RUN apt-get update && apt-get install -y --no-install-recommends \
     git \
     wget \
@@ -33,11 +34,16 @@ RUN mkdir -p /opt/hf_cache /opt/wandb_cache && \
     chmod -R 777 /opt/hf_cache /opt/wandb_cache
 
 # Set default environment variables for Hugging Face and WandB caches
-# These can be overridden at runtime (e.g., in the Slurm script via Apptainer/Singularity env vars or Docker's -e flag)
+# These can be overridden at runtime
 ENV TRANSFORMERS_CACHE=/opt/hf_cache
 ENV HF_HOME=/opt/hf_cache
 ENV WANDB_CACHE_DIR=/opt/wandb_cache
-ENV WANDB_DISABLED=true 
+ENV WANDB_DISABLED=true
+
+# REMOVED slurm.conf copying and chmod
+
+# Copy python script (optional if relying on bind mount, but ok to keep)
+COPY train_llama3_wikitext.py /workspace/train_llama3_wikitext.py
 
 # Set a working directory for the container
 WORKDIR /workspace

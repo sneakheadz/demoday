@@ -1,0 +1,33 @@
+# Use the official PyTorch image as the base
+FROM nvcr.io/nvidia/pytorch:23.04-py3
+
+# Set the working directory to /workspace
+WORKDIR /workspace
+
+# Install the necessary dependencies
+RUN pip install transformers
+RUN pip install datasets
+RUN pip install torch
+RUN pip install torch.nn
+RUN pip install torch.optim
+RUN pip install torch.utils.data
+
+# Install the LLaMA 3.1 8B model
+RUN python -m transformers download llama-3.1-8b
+
+# Install the Salesforce WikiText dataset
+RUN python -m datasets download salesforce/wikitext
+
+# Copy the train.py script into the container
+COPY train.py /workspace/
+
+# Set the environment variables
+ENV BATCH_SIZE=8
+ENV GRADIENT_ACCUMULATION_STEPS=4
+ENV LEARNING_RATE=5e-5
+ENV MAX_SEQ_LENGTH=2048
+ENV DATASET_NAME=salesforce/wikitext
+ENV MODEL_NAME=llama-3.1-8b
+
+# Define the command to run when the container is started
+CMD ["python", "train.py"]
