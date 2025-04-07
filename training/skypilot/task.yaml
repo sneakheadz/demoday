@@ -1,0 +1,46 @@
+envs:
+  MODEL_SIZE: "{{ MODEL_SIZE }}"
+  HF_TOKEN: "{{ HF_TOKEN }}"
+  WANDB_API_KEY: "{{ WANDB_API_KEY }}"
+  DATASET: "yahma/alpaca-cleaned"
+
+resources:
+  cloud: kubernetes
+  accelerators: H100:1
+  num_nodes: 1
+
+experimental:
+  config_overrides:
+    kubernetes:
+      pod_config:
+        spec:
+          containers:
+            - volumeMounts:
+                - mountPath: /mnt/data
+                  name: data-volume
+          volumes:
+            - name: data-volume
+              hostPath:
+                path: /mnt/data
+                type: Directory
+
+file_mounts:
+  /configs: ./configs
+
+setup: |
+  pip install torch torchvision torchao torchtune wandb
+  tune download meta-llama/Meta-Llama-3.1-${MODEL_SIZE}-Instruct \
+    --hf-token $HF_TOKEN \
+    --output-dir /tmp/Meta-Llama-3.1-${MODEL_SIZE}-Instruct \
+    --ignore-patterns "original/consolidated*"
+
+run: |
+  tune run --nproc_per_node $SKYPILOT_NUM_GPUS_PER_NODE \
+    lora_finetune_distributed \
+    --config /configs/${MODEL_SIZE}-lora.yaml \
+    dataset.source=$DATASET
+
+  # Save outputs to persistent storage
+  mkdir -p /mnt/data/${MODEL_SIZE}-lora-output
+  rsync -Pavz /tmp/Meta-Llama-3.1-${MODEL_SIZE}-Instruct-lora-output/ /mnt/data/${MODEL_SIZE}-lora-output/
+  rm -rf /tmp/Meta-Llama-3.1-${MODEL_SIZE}-Instruct
